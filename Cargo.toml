@@ -9,9 +9,9 @@ name = "chwowserver"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "=4.4.18", features = ["derive"] }
-serde = { version = "1", features = ["derive"] }
-toml = "=0.8.8"
-anyhow = "1"
-dirs = "5"
-indexmap = "=2.2.6"
+anyhow = "1.0.103"
+clap = { version = "4.6.2", features = ["derive"] }
+dirs = "6.0.0"
+indexmap = "2.14.0"
+serde = { version = "1.0.228", features = ["derive"] }
+toml = "1.1.3"
