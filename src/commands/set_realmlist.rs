@@ -19,8 +19,19 @@ pub fn run(realmlist: &str) -> Result<()> {
         return Ok(());
     }
 
+    let resolved_realmlist = cfg
+        .mappings
+        .as_ref()
+        .and_then(|mappings| mappings.get(realmlist))
+        .map(String::as_str)
+        .unwrap_or(realmlist);
+
+    if resolved_realmlist != realmlist {
+        println!("Resolved mapping '{}' -> {}", realmlist, resolved_realmlist);
+    }
+
     let mut backup = config::load_backup()?;
-    let new_content = format!("set realmlist {}\n", realmlist);
+    let new_content = format!("set realmlist {}\n", resolved_realmlist);
 
     for install_path in &cfg.paths {
         let realmlist_file = config::realmlist_path(install_path);
@@ -28,9 +39,7 @@ pub fn run(realmlist: &str) -> Result<()> {
 
         match process_installation(&realmlist_file, &new_content) {
             Ok(previous_content) => {
-                if let Some(previous_content) = previous_content {
-                    backup.entries.insert(key, previous_content);
-                }
+                backup.entries.insert(key, previous_content);
                 println!("OK: {}", realmlist_file.display());
             }
             Err(err) => {
@@ -46,8 +55,9 @@ pub fn run(realmlist: &str) -> Result<()> {
 
 /// Reads the current content of `realmlist_file`, writes `new_content` in
 /// its place, and returns the content that was there before the write.
-fn process_installation(realmlist_file: &Path, new_content: &str) -> Result<Option<String>> {
-    let previous_content = fs::read_to_string(realmlist_file).ok();
+fn process_installation(realmlist_file: &Path, new_content: &str) -> Result<String> {
+    let previous_content = fs::read_to_string(realmlist_file)
+        .with_context(|| format!("could not read {}", realmlist_file.display()))?;
 
     fs::write(realmlist_file, new_content)
         .with_context(|| format!("could not write {}", realmlist_file.display()))?;
