@@ -15,6 +15,7 @@ const REALMLIST_FILE_NAME: &str = "realmlist.wtf";
 pub struct Config {
     #[serde(default)]
     pub paths: Vec<PathBuf>,
+    pub mappings: Option<HashMap<String, String>>,
 }
 
 /// Backup of the realmlist.wtf content that was overwritten for each

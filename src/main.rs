@@ -33,6 +33,17 @@ enum Command {
     },
     /// Show the realmlist.wtf content that was in place before the last change
     LastConfig,
+    /// Register a key-realmlist mapping
+    #[command(name = "map")]
+    AddMapping {
+        /// Key value
+        key: String,
+        /// Realmlist
+        realmlist: String,
+        /// To overwrite if the key-realmlist pair already exists
+        #[arg(short, long)]
+        force: bool,
+    },
 }
 
 fn main() -> Result<()> {
@@ -43,6 +54,11 @@ fn main() -> Result<()> {
         Some(Command::ListPaths) => commands::list_paths::run(),
         Some(Command::RmPath { index }) => commands::rm_path::run(index),
         Some(Command::LastConfig) => commands::last_config::run(),
+        Some(Command::AddMapping {
+            key,
+            realmlist,
+            force,
+        }) => commands::add_mapping::run(key, realmlist, force),
         None => {
             let realmlist = cli
                 .realmlist

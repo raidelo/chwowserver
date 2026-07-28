@@ -1,3 +1,4 @@
+pub mod add_mapping;
 pub mod add_path;
 pub mod last_config;
 pub mod list_paths;
